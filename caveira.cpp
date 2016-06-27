@@ -1,7 +1,11 @@
 #include <cstdio>
-#include <GL/glut.h>
 #include <cmath>
+#include <ctime>
 #include <cassert>
+// c++ 11 apenas
+#include <chrono>
+#include <thread>
+#include <GL/glut.h>
 
 
 #include "comum.h"
@@ -12,8 +16,7 @@ using namespace std;// nao preciso usar std::xxxx
 // -lGL -lGLU -lglut -lm
 
 // TODO
-// tecla a > abre boca
-// tecla f > fecha boca
+// fazer com q as atualizacaoe nao de a sencaco de piscar
 
 
 void interacao_com_teclado(unsigned char tecla, int x, int y);
@@ -29,11 +32,14 @@ void st_rotacionar(vector<float *> & lst_vertices, float * referencia,\
 // =====================================================================
 #define largura  640
 #define altura 620
+#define TEMPO_ESPERA 40
 Obj3d * bc;// baixo caveira
 Obj3d * cc;// cima caveira
 int passo = 15;
 double angulo = 5*M_PI/180.0; // 10 graus
+double angulo_smooth = 1*M_PI/180.0; // 1 grau
 int angulo_camera = 50;// almentar esse valor aproxima a camera
+int i, max_i = 10;
 int centro_y = altura/2.0;
 int centro_x = largura/2.0;
 float centro_massa[3];
@@ -202,6 +208,18 @@ void interacao_com_teclado(unsigned char tecla, int x, int y)
         glutPostRedisplay();
     } else if(tecla == 'h' || tecla == 'H'){
         st_rotacionar(*bc->lst_vetices, bc->referencia, angulo, rotaca_x);
+    } else if(tecla == 'a' || tecla == 'A'){
+        for(i=0; i<max_i; i++){
+            st_rotacionar(*bc->lst_vetices, bc->referencia, angulo_smooth, rotaca_x);
+            this_thread::sleep_for(chrono::milliseconds(TEMPO_ESPERA));
+
+        }
+    } else if(tecla == 'f' || tecla == 'F'){
+        for(i=0; i<max_i; i++){
+            st_rotacionar(*bc->lst_vetices, bc->referencia, -angulo_smooth, rotaca_x);
+            this_thread::sleep_for(chrono::milliseconds(TEMPO_ESPERA));
+
+        }
     }
 
 }
