@@ -90,7 +90,7 @@ void st_rotacionar(vector<float *> & lst_vertices, float * referencia,
     }
     
     desloca_to(lst_vertices, referencia);
-    fn_desenho_animacao();
+    fn_desenho_principal();
     //redesenhar tudo e chamar o clear antes
     // o centro de massa deve ser o curringa
 }
@@ -151,9 +151,9 @@ void define_camera()
 void fn_desenho_principal(void)
 {
     glClear(GL_COLOR_BUFFER_BIT);// limpa toda tela
-    glPushMatrix();
+    //glPushMatrix();
     st_desesenhar_obj(cc);
-    glPushMatrix();
+    //glPushMatrix();
     st_desesenhar_obj(bc);
     
     // ==
@@ -167,6 +167,9 @@ void fn_desenho_principal(void)
     glFlush();
 }
 
+// nao precisou dessa funcao, o problema da piscada eh o Flush
+// foi resolvido com dando o Flush apenas quando desenha toda a cena (cima, baixo)
+// a utilizacao do pop e push nao resolveu, deixa o desenho anterir, tipo sombra
 void fn_desenho_animacao(void){
     printf("fui chamado :D\n");
     // tira a parte de baixo
@@ -234,12 +237,12 @@ void interacao_com_teclado(unsigned char tecla, int x, int y)
     } else if(tecla == 'a' || tecla == 'A'){
         for(i=0; i<max_i; i++){
             st_rotacionar(*bc->lst_vetices, bc->referencia, angulo_smooth, rotaca_x);
-            //this_thread::sleep_for(chrono::milliseconds(TEMPO_ESPERA));
+            this_thread::sleep_for(chrono::milliseconds(TEMPO_ESPERA));
         }
     } else if(tecla == 'f' || tecla == 'F'){
         for(i=0; i<max_i; i++){
             st_rotacionar(*bc->lst_vetices, bc->referencia, -angulo_smooth, rotaca_x);
-            //this_thread::sleep_for(chrono::milliseconds(TEMPO_ESPERA));
+            this_thread::sleep_for(chrono::milliseconds(TEMPO_ESPERA));
         }
     }
 }
