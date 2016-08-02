@@ -9,6 +9,10 @@ make
 ./out
 ```
 
+## interacao
+a -> abre a boca
+f -> fecha a boca
 
 ### todo
+
 integrar o movimento da caveira com uma camera que identifica o movento da boca.
