@@ -325,7 +325,7 @@ void desenhar_obj(vector<float *> & lst_vertices, vector<int *> & lst_faces)
         desenhar_arestas_pontos(p1, p2, p3);
 
     }
-    glFlush();
+    //glFlush();
     //glutSwapBuffers(); // net.c
 }
 

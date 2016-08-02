@@ -18,15 +18,25 @@ using namespace std;// nao preciso usar std::xxxx
 // TODO
 // fazer com q as atualizacaoe nao de a sencaco de piscar
 
+//# otima explicacao sobre push pop do opengl#
+/*
+http://www.swiftless.com/tutorials/opengl/pop_and_push_matrices.html
+
+glPushMatrix(); guarda corrente estado da matrix
+
+glPopMatrix(); volta ao estado anterior, (ultimo push)
+*/
+
 
 void interacao_com_teclado(unsigned char tecla, int x, int y);
-void interacao_com_mouse(void);
+void fn_desenho_principal(void);
 void myInit(void);
 void define_camera();
 void rotacionar_camera_y(double value);
 void rotacionar_camara_x(double value);
 void st_rotacionar(vector<float *> & lst_vertices, float * referencia,\
                    double value, int * eixos);
+void fn_desenho_animacao(void);
 
 
 // =====================================================================
@@ -38,7 +48,7 @@ Obj3d * cc;// cima caveira
 int passo = 15;
 double angulo = 5*M_PI/180.0; // 10 graus
 double angulo_smooth = 1*M_PI/180.0; // 1 grau
-int angulo_camera = 50;// almentar esse valor aproxima a camera
+int angulo_camera = 50;// aumentar esse valor aproxima a camera
 int i, max_i = 10;
 int centro_y = altura/2.0;
 int centro_x = largura/2.0;
@@ -80,7 +90,7 @@ void st_rotacionar(vector<float *> & lst_vertices, float * referencia,
     }
     
     desloca_to(lst_vertices, referencia);
-    interacao_com_mouse();
+    fn_desenho_animacao();
     //redesenhar tudo e chamar o clear antes
     // o centro de massa deve ser o curringa
 }
@@ -125,7 +135,7 @@ void myInit(void)
 void define_camera()
 {
     glMatrixMode(GL_PROJECTION);
-    glLoadIdentity();
+    //glLoadIdentity();
 
     gluPerspective(angulo_camera, (largura/altura), 0.5, 500);
 
@@ -138,20 +148,33 @@ void define_camera()
 }
 
 
-
-void interacao_com_mouse(void)
+void fn_desenho_principal(void)
 {
-    glClear(GL_COLOR_BUFFER_BIT);
-    st_desesenhar_obj(bc);
+    glClear(GL_COLOR_BUFFER_BIT);// limpa toda tela
+    glPushMatrix();
     st_desesenhar_obj(cc);
+    glPushMatrix();
+    st_desesenhar_obj(bc);
+    
     // ==
     glBegin(GL_POINTS);
     glColor3f(1.0f, 0.0f, 0.0f);
     glVertex3d(curinga[0], curinga[1], curinga[2]);
     glEnd();
     glColor3f(0.0f, 0.0f, 0.0f);
+
     // ==
     glFlush();
+}
+
+void fn_desenho_animacao(void){
+    printf("fui chamado :D\n");
+    // tira a parte de baixo
+    glPopMatrix();
+    glPushMatrix();
+    st_desesenhar_obj(bc);
+    glFlush();
+    
 }
 
 
@@ -211,17 +234,14 @@ void interacao_com_teclado(unsigned char tecla, int x, int y)
     } else if(tecla == 'a' || tecla == 'A'){
         for(i=0; i<max_i; i++){
             st_rotacionar(*bc->lst_vetices, bc->referencia, angulo_smooth, rotaca_x);
-            this_thread::sleep_for(chrono::milliseconds(TEMPO_ESPERA));
-
+            //this_thread::sleep_for(chrono::milliseconds(TEMPO_ESPERA));
         }
     } else if(tecla == 'f' || tecla == 'F'){
         for(i=0; i<max_i; i++){
             st_rotacionar(*bc->lst_vetices, bc->referencia, -angulo_smooth, rotaca_x);
-            this_thread::sleep_for(chrono::milliseconds(TEMPO_ESPERA));
-
+            //this_thread::sleep_for(chrono::milliseconds(TEMPO_ESPERA));
         }
     }
-
 }
 
 
@@ -250,7 +270,7 @@ int main(int argc, char *argv[])
     // * lembrando que tenho q> centro -> transforma -> original
     transladar_pontos_n(*cc->lst_vetices, -50.0, 1); // y
 
-    glutDisplayFunc(interacao_com_mouse);
+    glutDisplayFunc(fn_desenho_principal);
     //glutMouseFunc(my_mouse);
 
     glutKeyboardFunc(interacao_com_teclado);
